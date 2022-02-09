@@ -10,7 +10,4 @@ jobs:
           perl-version: '5.34'
       - name: Run day 1 tests
         working-directory: ./day-01
-        run: |
-          pwd
-          ls -la
-          prove -lv t
+        run: prove -lv t
