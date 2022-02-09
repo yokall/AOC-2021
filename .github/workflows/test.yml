@@ -1,0 +1,12 @@
+name: Run tests
+on: [push]
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shogo82148/actions-setup-perl@v1.14.2
+        with:
+          perl-version: '5.34'
+      - run: cd day-01
+      - run: prove -lv t
