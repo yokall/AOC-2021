@@ -9,4 +9,6 @@ jobs:
         with:
           perl-version: '5.34'
       - run: cd day-01
+      - run: pwd
+      - run: ls -la
       - run: prove -lv t
