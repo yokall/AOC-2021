@@ -3,12 +3,13 @@
 use strict;
 use warnings;
 
+use lib '../lib';
 use lib 'lib';
 
+use Common::FileReader;
 use DayTwo::MovementProcessor;
-use DayTwo::FileReader;
 
-my $depths = DayTwo::FileReader::read_file_to_array('/home/colin/AOC-2021/day-02/files/puzzle_input.txt');
+my $depths = Common::FileReader::read_file_to_array('/home/colin/AOC-2021/day-02/files/puzzle_input.txt');
 
 my $part_one_result = DayTwo::MovementProcessor::part_one($depths);
 

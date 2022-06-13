@@ -1,4 +1,4 @@
-package DayOne::FileReader;
+package Common::FileReader;
 
 use strict;
 use warnings;
