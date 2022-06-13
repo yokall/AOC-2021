@@ -3,12 +3,13 @@
 use strict;
 use warnings;
 
+use lib '../lib';
 use lib 'lib';
 
+use Common::FileReader;
 use DayOne::DepthProcessor;
-use DayOne::FileReader;
 
-my $depths = DayOne::FileReader::read_file_to_array('/home/colin/AOC-2021/day-01/files/puzzle_input.txt');
+my $depths = Common::FileReader::read_file_to_array('/home/colin/AOC-2021/day-01/files/puzzle_input.txt');
 
 my $part_one_result = DayOne::DepthProcessor::part_one($depths);
 
