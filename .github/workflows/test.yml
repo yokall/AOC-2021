@@ -11,3 +11,6 @@ jobs:
       - name: Run day 1 tests
         working-directory: ./day-01
         run: prove -lv t
+      - name: Run day 2 tests
+        working-directory: ./day-02
+        run: prove -lv t
