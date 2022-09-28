@@ -5,8 +5,6 @@ use warnings;
 
 use Test::More;
 
-use lib 'lib';
-
 use_ok('DayThree::DiagnosticOperations');
 
 my $DIAGNOSTIC_OUTPUT = [
