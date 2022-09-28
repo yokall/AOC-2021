@@ -6,8 +6,6 @@ use warnings;
 use Test::Deep;
 use Test::More;
 
-use lib 'lib';
-
 use_ok('DayThree::BinaryOperations');
 
 my $LIST_OF_BINARY_NUMBERS = [
