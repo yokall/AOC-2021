@@ -11,4 +11,4 @@ jobs:
       - name: Install perl modules
         run: cpanm --installdeps .
       - name: Run tests
-        run: prove -lrv t
+        run: yath - t
