@@ -3,12 +3,17 @@
 use strict;
 use warnings;
 
-use lib '../lib';
+use File::Basename;
+use FindBin;
+
+use lib "$FindBin::Bin/../lib";
 
 use Common::FileReader;
 use DayTwo::MovementProcessor;
 
-my $depths = Common::FileReader::read_file_to_array('../files/02_puzzle_input.txt');
+my $depths
+    = Common::FileReader::read_file_to_array(
+    dirname(__FILE__) . '/../files/02_puzzle_input.txt' );
 
 my $part_one_result = DayTwo::MovementProcessor::part_one($depths);
 

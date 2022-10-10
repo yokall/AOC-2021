@@ -3,12 +3,16 @@
 use strict;
 use warnings;
 
-use lib '../lib';
+use File::Basename;
+use FindBin;
+
+use lib "$FindBin::Bin/../lib";
 
 use Common::FileReader;
 use DayOne::DepthProcessor;
 
-my $depths = Common::FileReader::read_file_to_array('../files/01_puzzle_input.txt');
+my $depths = Common::FileReader::read_file_to_array(
+    dirname(__FILE__) . '/../files/01_puzzle_input.txt' );
 
 my $part_one_result = DayOne::DepthProcessor::part_one($depths);
 
