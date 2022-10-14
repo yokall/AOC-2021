@@ -6,10 +6,10 @@ use warnings;
 use Hydrothermal::LineDefinitionParser;
 
 sub lines {
-    my $line_definitions = [ '0,9 -> 5,9', '0,9 -> 2,9', ];
+    my $line_definitions = [ '0,9 -> 5,9', '0,9 -> 2,9', '0,0 -> 8,8' ];
 
-    my @lines = @{ Hydrothermal::LineDefinitionParser::parse_input(
-            $line_definitions) };
+    my @lines =
+      @{ Hydrothermal::LineDefinitionParser::parse_input($line_definitions) };
 
     return \@lines;
 }
