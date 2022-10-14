@@ -30,14 +30,14 @@ sub _build_points {
 
     my @points;
 
-    my $add_to_x
-        = ( $self->start_point->{x} == $self->end_point->{x} ) ? 0
-        : ( $self->start_point->{x} < $self->end_point->{x} )  ? 1
-        :                                                        -1;
-    my $add_to_y
-        = ( $self->start_point->{y} == $self->end_point->{y} ) ? 0
-        : ( $self->start_point->{y} < $self->end_point->{y} )  ? 1
-        :                                                        -1;
+    my $add_to_x =
+        ( $self->start_point->{x} == $self->end_point->{x} ) ? 0
+      : ( $self->start_point->{x} < $self->end_point->{x} )  ? 1
+      :                                                        -1;
+    my $add_to_y =
+        ( $self->start_point->{y} == $self->end_point->{y} ) ? 0
+      : ( $self->start_point->{y} < $self->end_point->{y} )  ? 1
+      :                                                        -1;
 
     my $x = $self->start_point->{x};
     my $y = $self->start_point->{y};
@@ -56,17 +56,11 @@ sub _build_points {
     return \@points;
 }
 
-sub _line_is_vertical {
-    my $self = shift;
-
-    return $self->start_point->{x} eq $self->end_point->{x};
-}
-
 sub _build_is_diagonal {
     my $self = shift;
 
-    return (   $self->start_point->{x} != $self->end_point->{x}
-            && $self->start_point->{y} != $self->end_point->{y} );
+    return ( $self->start_point->{x} != $self->end_point->{x}
+          && $self->start_point->{y} != $self->end_point->{y} );
 }
 
 1;
