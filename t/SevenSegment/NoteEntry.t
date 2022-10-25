@@ -77,17 +77,14 @@ subtest
 
     $note_entry->deduce_segment_mappings();
 
-    use Data::Dumper;
-    warn Dumper( $note_entry->segment_mappings );
-
     my $expected_segment_mappings = {
-        a => ['d'],
-        b => ['e'],
-        c => ['a'],
-        d => ['f'],
-        e => ['g'],
-        f => ['b'],
-        g => ['c'],
+        a => 'c',
+        b => 'f',
+        c => 'g',
+        d => 'a',
+        e => 'b',
+        f => 'd',
+        g => 'e',
     };
 
     is( $note_entry->segment_mappings, $expected_segment_mappings );

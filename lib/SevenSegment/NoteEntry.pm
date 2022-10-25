@@ -13,7 +13,7 @@ has 'four_digits' => (
 );
 
 has 'segment_mappings' => (
-    is      => 'ro',
+    is      => 'rw',
     isa     => 'HashRef',
     default => sub {
         return {
@@ -35,15 +35,15 @@ sub deduce_segment_mappings {
         = sort { length $a <=> length $b } @{ $self->unique_signal_patterns };
 
     foreach my $unique_signal_pattern (@sorted_unique_signal_patterns) {
-        if ( length($unique_signal_pattern) == 2 ) {
-            my @wires = split( //, $unique_signal_pattern );
+        my @wires        = split( //, $unique_signal_pattern );
+        my %wires_lookup = map { $_ => 1 } @wires;
 
+        if ( length($unique_signal_pattern) == 2 ) {
             $self->segment_mappings->{c} = \@wires;
             my @copy = @wires;
             $self->segment_mappings->{f} = \@copy;
         }
         elsif ( length($unique_signal_pattern) == 3 ) {
-            my @wires = split( //, $unique_signal_pattern );
             foreach my $wire (@wires) {
                 unless (
                     grep( /^$wire$/, @{ $self->segment_mappings->{c} } ) )
@@ -55,7 +55,6 @@ sub deduce_segment_mappings {
         }
         elsif ( length($unique_signal_pattern) == 4 ) {
             my @bd_pair;
-            my @wires = split( //, $unique_signal_pattern );
             foreach my $wire (@wires) {
                 unless (
                     grep( /^$wire$/, @{ $self->segment_mappings->{c} } ) )
@@ -69,20 +68,10 @@ sub deduce_segment_mappings {
             $self->segment_mappings->{d} = \@copy;
         }
         elsif ( length($unique_signal_pattern) == 5 ) {
-            my @wires        = split( //, $unique_signal_pattern );
-            my %wires_lookup = map { $_ => 1 } @wires;
-
-            my %bd_options_lookup = map { $_ => 1 } (
-                @{ $self->segment_mappings->{b} },
-                @{ $self->segment_mappings->{d} }
-            );
-            my @bd_options = keys %bd_options_lookup;
-
-            my %cf_options_lookup = map { $_ => 1 } (
-                @{ $self->segment_mappings->{c} },
-                @{ $self->segment_mappings->{f} }
-            );
-            my @cf_options = keys %cf_options_lookup;
+            my @bd_options
+                = @{ _get_options_for_wire_pair( $self, 'b', 'd' ) };
+            my @cf_options
+                = @{ _get_options_for_wire_pair( $self, 'c', 'f' ) };
 
             # if wires contains the 2 possibilities for 'b' & 'd',
             # whichever letter of the pair assigned to 'c' & 'f' is present
@@ -162,20 +151,10 @@ sub deduce_segment_mappings {
             }
         }
         elsif ( length($unique_signal_pattern) == 6 ) {
-            my @wires        = split( //, $unique_signal_pattern );
-            my %wires_lookup = map { $_ => 1 } @wires;
-
-            my %bd_options_lookup = map { $_ => 1 } (
-                @{ $self->segment_mappings->{b} },
-                @{ $self->segment_mappings->{d} }
-            );
-            my @bd_options = keys %bd_options_lookup;
-
-            my %cf_options_lookup = map { $_ => 1 } (
-                @{ $self->segment_mappings->{c} },
-                @{ $self->segment_mappings->{f} }
-            );
-            my @cf_options = keys %cf_options_lookup;
+            my @bd_options
+                = @{ _get_options_for_wire_pair( $self, 'b', 'd' ) };
+            my @cf_options
+                = @{ _get_options_for_wire_pair( $self, 'c', 'f' ) };
 
           # if wires contains the 2 possibilities for 'b' & 'd' and 'c' & 'f',
           # whichever letter is not 1 of these wires or the wire for 'a'
@@ -185,22 +164,7 @@ sub deduce_segment_mappings {
                 && exists( $wires_lookup{ $cf_options[0] } )
                 && exists( $wires_lookup{ $cf_options[1] } ) )
             {
-                # filter known wires from e and g
-                my $a = $self->segment_mappings->{a}->[0];
-                my $b = $self->segment_mappings->{b}->[0];
-                my $c = $self->segment_mappings->{c}->[0];
-                my $d = $self->segment_mappings->{d}->[0];
-                my $f = $self->segment_mappings->{f}->[0];
-
-                my @remaining_wires = grep( /^[^$a|$b|$c|$d|$f]$/,
-                    @{ $self->segment_mappings->{e} } );
-
-                $self->segment_mappings->{e} = \@remaining_wires;
-                my @temp = @remaining_wires;
-                $self->segment_mappings->{g} = \@temp;
-
-                my @wires        = split( //, $unique_signal_pattern );
-                my %wires_lookup = map { $_ => 1 } @wires;
+                _filter_known_wires_from_e_and_g($self);
 
                 my %eg_options_lookup = map { $_ => 1 } (
                     @{ $self->segment_mappings->{e} },
@@ -223,6 +187,40 @@ sub deduce_segment_mappings {
             }
         }
     }
+
+    my %flipped_hash = map { $self->segment_mappings->{$_}->[0] => $_ }
+        keys %{ $self->segment_mappings };
+
+    $self->segment_mappings( \%flipped_hash );
+}
+
+sub _get_options_for_wire_pair {
+    my ( $self, $wire1, $wire2 ) = @_;
+
+    my %options_lookup = map { $_ => 1 } (
+        @{ $self->segment_mappings->{$wire1} },
+        @{ $self->segment_mappings->{$wire2} }
+    );
+    my @options = keys %options_lookup;
+
+    return \@options;
+}
+
+sub _filter_known_wires_from_e_and_g {
+    my $self = shift;
+
+    my $a = $self->segment_mappings->{a}->[0];
+    my $b = $self->segment_mappings->{b}->[0];
+    my $c = $self->segment_mappings->{c}->[0];
+    my $d = $self->segment_mappings->{d}->[0];
+    my $f = $self->segment_mappings->{f}->[0];
+
+    my @remaining_wires
+        = grep( /^[^$a|$b|$c|$d|$f]$/, @{ $self->segment_mappings->{e} } );
+
+    $self->segment_mappings->{e} = \@remaining_wires;
+    my @temp = @remaining_wires;
+    $self->segment_mappings->{g} = \@temp;
 }
 
 1;

@@ -43,3 +43,36 @@ foreach my $note_entry ( @{$parsed_note_entries} ) {
 }
 
 warn "Part 1 answer: $number_of_unique_segments";
+
+my %digit_lookup = (
+    cf      => 1,
+    acf     => 7,
+    bcdf    => 4,
+    acdeg   => 2,
+    acdfg   => 3,
+    abdfg   => 5,
+    abcefg  => 0,
+    abdefg  => 6,
+    abcdfg  => 9,
+    abcdefg => 8,
+);
+
+my $total;
+foreach my $note_entry ( @{$parsed_note_entries} ) {
+    $note_entry->deduce_segment_mappings();
+
+    my $output_value;
+    foreach my $digit ( @{ $note_entry->four_digits } ) {
+        my @mapped_values;
+        foreach my $wire ( split( //, $digit ) ) {
+            push( @mapped_values, $note_entry->segment_mappings->{$wire} );
+        }
+        my $mapped_value = join( '', sort(@mapped_values) );
+
+        $output_value .= $digit_lookup{$mapped_value};
+    }
+
+    $total += $output_value;
+}
+
+warn "Part 2 answer: $total";
